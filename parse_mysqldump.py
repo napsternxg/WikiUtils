@@ -8,13 +8,10 @@ from collections import namedtuple
 
 FILEPROPS=namedtuple("Fileprops", "parser num_fields column_indexes")
 
-CATEGORYLINKS_PARSER=re.compile(r'\((?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'.*?\'?),(?P<row6>\'.*?\'?)\)')
-REDIRECT_PARSER=re.compile(r'\((?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>\'.*?\'?)\)')
-CATEGORY_PARSER=re.compile(r'\((?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>[0-9]+?),(?P<row3>[0-9]+?),(?P<row4>[0-9]+?)\)')
-PAGE_PROPS_PARSER=re.compile(r'\(([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),(\'\'),(\'.*?\'),(\'.*?\')\)')
-PAGE_PARSER=re.compile((r'\((?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>[0-9]+?),(?P<row5>[0-9]+?),(?P<row6>[0-9]?),'
-    r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>\'.*?\'?),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))\)'))
-
+CATEGORYLINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'.*?\'?),(?P<row6>\'.*?\'?)')
+REDIRECT_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>\'.*?\'?)')
+CATEGORY_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>[0-9]+?),(?P<row3>[0-9]+?),(?P<row4>[0-9]+?)')
+PAGE_PROPS_PARSER=re.compile(r'([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),(\'\'),(\'.*?\'),(\'.*?\')')
 PAGE_PARSER=re.compile((r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>[0-9]+?),(?P<row5>[0-9]+?),(?P<row6>[0-9]?),'
     r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>\'.*?\'?),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))'))
 
