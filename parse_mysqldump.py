@@ -15,6 +15,8 @@ PAGE_PROPS_PARSER=re.compile(r'\(([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),
 PAGE_PARSER=re.compile((r'\((?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>[0-9]+?),(?P<row5>[0-9]+?),(?P<row6>[0-9]?),'
     r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>\'.*?\'?),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))\)'))
 
+PAGE_PARSER=re.compile((r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>[0-9]+?),(?P<row5>[0-9]+?),(?P<row6>[0-9]?),'
+    r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>\'.*?\'?),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))'))
 
 """
 `page_id` int(8) unsigned NOT NULL AUTO_INCREMENT,
@@ -60,13 +62,17 @@ def process_file(fp, fp_out, filetype, column_indexes=None):
         for i, line in enumerate(fp):
             if line.startswith('INSERT INTO `{}` VALUES '.format(filetype)):
                 start, partition, values = line.partition(' VALUES ')
-                for i, match in enumerate(parser.finditer(values)):
-                    try:
-                        pbar.update(1)
-                        row = parse_match(match)
-                        print("\t".join(row), file=fp_out)
-                    except Exception as e:
-                        print("Line: {}, Exception: {}".format(i, e), file=sys.stderr)
+                # replace unicode dash with ascii dash
+                values = values.strip()[1:-1].split("),(")
+                for value in values:
+                    value = value.replace("\\xe2\\x80\\x93", "-")
+                    for i, match in enumerate(parser.finditer(value)):
+                        try:
+                            pbar.update(1)
+                            row = parse_match(match)
+                            print("\t".join(row), file=fp_out)
+                        except Exception as e:
+                            print("Line: {}, Exception: {}".format(i, e), file=sys.stderr)
 
 def main():
     import argparse
@@ -84,7 +90,7 @@ def main():
     args = parser.parse_args()
 
     print(args)
-    with gzip.open(args.filename, 'rt') as fp, open(args.outputfile, 'wt') as fp_out:
+    with gzip.open(args.filename, 'rt', encoding='ascii', errors='backslashreplace') as fp, open(args.outputfile, 'wt', encoding='utf-8') as fp_out:
         process_file(fp, fp_out, args.filetype, column_indexes=args.column_indexes)
     
     #with gzip.open("enwiki-20170920-categorylinks.sql.gz", 'rt') as fp, open("categorylinks.txt", "wt") as fp_out:
