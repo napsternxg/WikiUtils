@@ -12,8 +12,8 @@ usage: parse_mysqldump.py [-h] [--column-indexes COLUMN_INDEXES]
 
 positional arguments:
   filename              name of the wikipedia sql.gz file.
-  filetype              following filetypes are supported:
-                        [categorylinks,redirect,category,page_props,page]
+  filetype              following filetypes are supported: [categorylinks,
+                        pagelinks, redirect, category, page_props, page]
   outputfile            name of the output file
 
 optional arguments:

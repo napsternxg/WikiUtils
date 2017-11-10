@@ -90,7 +90,7 @@ def main():
             help="name of the wikipedia sql.gz file.")
     parser.add_argument("filetype",
             help="following filetypes are supported:\n[{}]".format(
-                ",".join(FILETYPE_PROPS.keys())
+                ", ".join(FILETYPE_PROPS.keys())
                 ))
     parser.add_argument("outputfile", 
             help="name of the output file")
