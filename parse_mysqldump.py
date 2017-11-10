@@ -8,7 +8,9 @@ from collections import namedtuple
 
 FILEPROPS=namedtuple("Fileprops", "parser num_fields column_indexes")
 
-CATEGORYLINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'.*?\'?),(?P<row6>\'.*?\'?)')
+#CATEGORYLINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'.*?\'?),(?P<row6>\'.*?\'?)')
+CATEGORYLINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'[a-z\-]*?\'?),(?P<row6>\'[a-z]+\'?)')
+PAGELINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>[0-9]+?)')
 REDIRECT_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>\'.*?\'?)')
 CATEGORY_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>[0-9]+?),(?P<row3>[0-9]+?),(?P<row4>[0-9]+?)')
 PAGE_PROPS_PARSER=re.compile(r'([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),(\'\'),(\'.*?\'),(\'.*?\')')
@@ -16,6 +18,7 @@ PAGE_PARSER=re.compile((r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?)
     r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>\'.*?\'?),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))'))
 
 """
+# page
 `page_id` int(8) unsigned NOT NULL AUTO_INCREMENT,
 `page_namespace` int(11) NOT NULL DEFAULT '0',
 `page_title` varbinary(255) NOT NULL DEFAULT '',
@@ -31,11 +34,20 @@ PAGE_PARSER=re.compile((r'(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?)
 `page_content_model` varbinary(32) DEFAULT NULL,
 `page_lang` varbinary(35) DEFAULT NULL,
 
+
+# pagelinks
+`pl_from` int(8) unsigned NOT NULL DEFAULT '0',
+`pl_namespace` int(11) NOT NULL DEFAULT '0',
+`pl_title` varbinary(255) NOT NULL DEFAULT '',
+`pl_from_namespace` int(11) NOT NULL DEFAULT '0',
+
+
 """
 
 
 FILETYPE_PROPS=dict(
         categorylinks=FILEPROPS(CATEGORYLINKS_PARSER, 7, (0, 1, 6)),
+        pagelinks=FILEPROPS(PAGELINKS_PARSER, 4, (0, 1, 2, 3)),
         redirect=FILEPROPS(REDIRECT_PARSER, 5, (0, 1, 2)),
         category=FILEPROPS(CATEGORY_PARSER, 5, (0, 1, 2, 3, 4)),
         page_props=FILEPROPS(PAGE_PROPS_PARSER, 7, (0, 1)),
