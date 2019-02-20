@@ -22,3 +22,11 @@ optional arguments:
                         column indexes to use in output file
 ```
 
+
+## Inspecting dump files in BASH
+
+Run the following command to parse the dump files in bash. The first and last lines will have some non column information. 
+
+```
+zcat enwiki-20170920-categorylinks.sql.gz | grep $'^INSERT INTO ' | sed 's/),(/\n/g' | less -N
+```
