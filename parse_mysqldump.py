@@ -62,7 +62,7 @@ def parse_match(match, column_indexes):
     return tuple(row["row{}".format(i)] for i in column_indexes)
 
 
-def parse_value(value, parser, column_indexes, value_idx=0):
+def parse_value(value, parser, column_indexes, value_idx=0, pbar=None):
     # replace unicode dash with ascii dash
     value = value.replace("\\xe2\\x80\\x93", "-")
     parsed_correctly = False
@@ -77,16 +77,16 @@ def parse_value(value, parser, column_indexes, value_idx=0):
         print("Line: {!r}, IDX: {}, Exception: {}".format(value, value_idx, "Unable to parse."), file=sys.stderr)
 
 
-def process_insert_values_line(line, parser, column_indexes, count_inserts=0):
+def process_insert_values_line(line, parser, column_indexes, count_inserts=0, pbar=None):
     start, partition, values = line.partition(' VALUES ')
     # Each insert statement has format: 
     # INSERT INTO "table_name" VALUES (v1,v2,v3),(v1,v2,v3),(v1,v2,v3);
     # When splitting by "),(" we need to only consider string from values[1:-2]
     # This ignores the starting "(" and ending ");"
     values = values.strip()[1:-2].split("),(")
-    print("Found {} values to insert in insert no. {}".format(len(values), count_inserts), file=sys.stderr)
+    pbar.set_postfix(found_values=len(values), insert_num=count_inserts)
     for value_idx, value in enumerate(values):
-        for row in parse_value(value, parser, column_indexes, value_idx):
+        for row in parse_value(value, parser, column_indexes, value_idx, pbar):
             yield row
 
 
@@ -104,7 +104,7 @@ def process_file(fp, fp_out, filetype, column_indexes=None, silent=False):
             if line.startswith('INSERT INTO `{}` VALUES '.format(filetype)):
                 count_inserts += 1
                 for row in process_insert_values_line(
-                        line, parser, column_indexes, count_inserts):
+                        line, parser, column_indexes, count_inserts, pbar):
                     if pbar is not None:
                         pbar.update(1)
                     print("\t".join(row), file=fp_out)
