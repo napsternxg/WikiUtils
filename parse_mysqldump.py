@@ -11,30 +11,34 @@ FILEPROPS=namedtuple("Fileprops", "parser num_fields column_indexes")
 #CATEGORYLINKS_PARSER=re.compile(r'(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'\'?),(?P<row5>\'.*?\'?),(?P<row6>\'.*?\'?)')
 CATEGORYLINKS_PARSER=re.compile(r'^(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?),(?P<row3>\'[0-9\ \-:]+\'?),(?P<row4>\'.*?\'?),(?P<row5>\'[a-z\-]*?\'?),(?P<row6>\'[a-z]+\'?)$')
 PAGELINKS_PARSER=re.compile(r'^(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>[0-9]+?)$')
+LANGLINKS_PARSER=re.compile(r'^(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>\'.*?\'?)$')
 REDIRECT_PARSER=re.compile(r'^(?P<row0>[0-9]+?),(?P<row1>-?[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>\'.*?\'?)$')
 CATEGORY_PARSER=re.compile(r'^(?P<row0>[0-9]+?),(?P<row1>\'.*?\'?),(?P<row2>[0-9]+?),(?P<row3>[0-9]+?),(?P<row4>[0-9]+?)$')
 PAGE_PROPS_PARSER=re.compile(r'^([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),(\'\'),(\'.*?\'),(\'.*?\')$')
-PAGE_PARSER=re.compile((r'^(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>\'.*?\'?),(?P<row4>[0-9]+?),(?P<row5>[0-9]+?),(?P<row6>[0-9]?),'
-    r'(?P<row7>[0-9\.]+?),(?P<row8>\'.*?\'?),(?P<row9>(?P<row9val>\'.*?\'?)|(?P<row9null>NULL)),(?P<row10>[0-9]+?),(?P<row11>[0-9]+?),'
-    r'(?P<row12>(?P<row12val>\'.*?\'?)|(?P<row12null>NULL)),(?P<row13>(?P<row13val>\'.*?\'?)|(?P<row13null>NULL))$'))
+PAGE_PARSER=re.compile((r'^(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?),(?P<row3>[0-9]+?),(?P<row4>[0-9]?),'
+    r'(?P<row5>[0-9\.]+?),(?P<row6>\'.*?\'?),(?P<row7>(?P<row7val>\'.*?\'?)|(?P<row7null>NULL)),(?P<row8>[0-9]+?),(?P<row9>[0-9]+?),'
+    r'(?P<row10>(?P<row10val>\'.*?\'?)|(?P<row10null>NULL)),(?P<row11>(?P<row11val>\'.*?\'?)|(?P<row11null>NULL))$'))
+
 
 """
 # page
 `page_id` int(8) unsigned NOT NULL AUTO_INCREMENT,
-`page_namespace` int(11) NOT NULL DEFAULT '0',
+`page_namespace` int(11) NOT NULL DEFAULT 0,
 `page_title` varbinary(255) NOT NULL DEFAULT '',
-`page_restrictions` tinyblob NOT NULL,
-`page_counter` bigint(20) unsigned NOT NULL DEFAULT '0',
-`page_is_redirect` tinyint(1) unsigned NOT NULL DEFAULT '0',
-`page_is_new` tinyint(1) unsigned NOT NULL DEFAULT '0',
-`page_random` double unsigned NOT NULL DEFAULT '0',
-`page_touched` varbinary(14) NOT NULL DEFAULT '',
+`page_is_redirect` tinyint(1) unsigned NOT NULL DEFAULT 0,
+`page_is_new` tinyint(1) unsigned NOT NULL DEFAULT 0,
+`page_random` double unsigned NOT NULL DEFAULT 0,
+`page_touched` varbinary(14) NOT NULL,
 `page_links_updated` varbinary(14) DEFAULT NULL,
-`page_latest` int(8) unsigned NOT NULL DEFAULT '0',
-`page_len` int(8) unsigned NOT NULL DEFAULT '0',
+`page_latest` int(8) unsigned NOT NULL DEFAULT 0,
+`page_len` int(8) unsigned NOT NULL DEFAULT 0,
 `page_content_model` varbinary(32) DEFAULT NULL,
 `page_lang` varbinary(35) DEFAULT NULL,
 
+#langlinks
+`ll_from` int(8) unsigned NOT NULL DEFAULT 0,
+`ll_lang` varbinary(35) NOT NULL DEFAULT '',
+`ll_title` varbinary(255) NOT NULL DEFAULT '',
 
 # pagelinks
 `pl_from` int(8) unsigned NOT NULL DEFAULT '0',
@@ -49,10 +53,11 @@ PAGE_PARSER=re.compile((r'^(?P<row0>[0-9]+?),(?P<row1>[0-9]+?),(?P<row2>\'.*?\'?
 FILETYPE_PROPS=dict(
         categorylinks=FILEPROPS(CATEGORYLINKS_PARSER, 7, (0, 1, 6)),
         pagelinks=FILEPROPS(PAGELINKS_PARSER, 4, (0, 1, 2, 3)),
+        langlinks=FILEPROPS(LANGLINKS_PARSER, 3, (0, 1, 2)),
         redirect=FILEPROPS(REDIRECT_PARSER, 5, (0, 1, 2)),
         category=FILEPROPS(CATEGORY_PARSER, 5, (0, 1, 2, 3, 4)),
         page_props=FILEPROPS(PAGE_PROPS_PARSER, 7, (0, 1)),
-        page=FILEPROPS(PAGE_PARSER, 14, (0, 1, 2, 5, 11, 12, 13)),
+        page=FILEPROPS(PAGE_PARSER, 12, (0, 1, 2, 3, 9, 10, 11)),
         )
 
 #VALUE_PARSER=re.compile(r'\(([0-9]+),(\'.*?\'),(\'.*?\'),(\'[0-9\ \-:]+\'),(\'\'),(\'.*?\'),(\'.*?\')\)')
